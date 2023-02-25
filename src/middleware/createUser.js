@@ -48,9 +48,9 @@ module.exports = async (req, res) => {
     const msg = {
       to: `${email}`,
       from: 'caioaugustobrg@gmail.com',
-      subject: 'Sending with SendGrid is Fun',
-      text: 'and easy to do anywhere, even with Node.js',
-      html: '<strong>and easy to do anywhere, even with Node.js</strong>',
+      subject: 'Obrigado por usar meu app',
+      text: `Eai, ${username}. Esse é um email automático enviado para o email que você cadastrou na minha aplicação. Você pode encontrar o algoritmo que faz isso aqui: https://github.com/CaioAugustobrg/backendlogin2/blob/main/src/middleware/createUser.js. Mais uma vez: muito obrigado por testar minha aplicação. Fale comigo: https://www.linkedin.com/in/caioaugustobrg/`,
+      html: `<strong>${username}</strong>`,
     }
     sgMail
       .send(msg)
