@@ -36,7 +36,7 @@ module.exports = async (req, res) => {
 		});
 
 		if (emailExits) {
-			return res.status(400).json({
+			return res.status(406).json({
 				erro: true,
 				mensagem: 'Email em uso por outro usuário!',
 			});
@@ -61,7 +61,7 @@ module.exports = async (req, res) => {
 			from: 'caioaugustobrg@gmail.com',
 			subject: 'Obrigado por usar meu app',
 			text: `Eai, ${username}. Esse é um email automático enviado para o email que você cadastrou na minha aplicação. Você pode encontrar o algoritmo que faz isso aqui: https://github.com/CaioAugustobrg/backendlogin2/blob/main/src/middleware/createUser.js. Mais uma vez: muito obrigado por testar minha aplicação. Fale comigo: https://www.linkedin.com/in/caioaugustobrg/`,
-			html: `<strong>${username}</strong>`,
+			html: `<strong>Eai, ${username}. Esse é um email automático enviado para o email que você cadastrou na minha aplicação. Você pode encontrar o algoritmo que faz isso aqui: https://github.com/CaioAugustobrg/backendlogin2/blob/main/src/middleware/createUser.js. Mais uma vez: muito obrigado por testar minha aplicação. Fale comigo: https://www.linkedin.com/in/caioaugustobrg/</strong>`,
 		};
 		sgMail
 			.send(msg)
@@ -71,7 +71,6 @@ module.exports = async (req, res) => {
 			.catch((error) => {
 				console.error(error);
 			});
-		res.redirect('/http://localhost:5173/login');
 		return  res.status(200).json({
 			user,
 			erro: false,
