@@ -11,19 +11,17 @@ const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 const bodyParser = require('body-parser');
 const cors = require('cors');
-
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
-// use `prisma` in your application to read and write data in your DB
 
-app.get('/', eAdmin, async (req, res) => {
-	return res.json({
-		erro: false,
-		mensagem: 'Token autorizado!',
-	});
+app.get('/transactions/:id', eAdmin, async (req, res) => {
+ 
+	console.log(req.params.id);
+		
+	
 });
 
 app.post('/register', createUser);
@@ -40,18 +38,28 @@ app.post('/login', async (req, res) => {
 	});
 
 	console.log(req.body);
-	const {  username, password, email } = req.body;
+	const {  username, password, email, id} = req.body;
+	
 	const hashPassword = await bcrypt.hash(password, 8);
 	let token = jwt.sign({ id: 1 }, 'AS3O20A193KS39DJANVN81937G', {
-		expiresIn: '24h',
+		expiresIn: '7d',
 	});
 
 	try {
-		const user = await prisma.user.findUnique({
+
+		
+		let userId = await prisma.user.findFirst({
+		
+			where: {id}
+		});
+		console.log(userId);
+		if (userId === null) return res.json({msg: 'sssss'});
+
+		let user = await prisma.user.findFirst({
 			where: {
 				email: email,
 				username: username
-        
+  
 			},
 		});
 
@@ -66,10 +74,10 @@ app.post('/login', async (req, res) => {
 		if (!passwordMatch) {
 			return res.status(404).json({
 				erro: true,
-				mensagem: 'Erro: Usuário ou senha incorreto(s)!',
+				mensagem: 'Erro: Email, usuário ou senha incorreto(s)!',
 			});
 		}
-		
+	
 		return res.status(200).json({
 			erro: false,
 			mensagem: 'Login efetuado com sucesso!',
@@ -77,6 +85,7 @@ app.post('/login', async (req, res) => {
 		});
 
 	} catch (error) {
+		console.log(error);
 		return res.status(400).json({
 			erro: true,
 			mensagem: `Erro: " + ${error}`,
