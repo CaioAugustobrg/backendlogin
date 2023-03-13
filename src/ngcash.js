@@ -10,27 +10,41 @@ const prisma = new PrismaClient();
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const userLogin = require('./middleware/userLogin.js');
-app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(cors());
 
-app.get('/transactions/:id', eAdmin, async (req, res) => {
+app.put('/transactions/:id', eAdmin, async (req, res) => {
 	const {id} = req.params;
-	res.send(id);
-	console.log(id);
-	let userId = await prisma.user.findUnique({	
-		where: {id}
-	});
-	console.log(userId);
-
-	if (userId === null) {
-		return res.json({
-			msg: '222222222'
+	const {balance} = req.body;
+	try {
+		let updateBalanceById = await prisma.account.update({
+			where: {accountId: id},
+			data: { balance: balance }
 		});
-	}	else {
-		return res.json({msg: 'deu certo'});
+
+		console.log(updateBalanceById);
+
+		const registerTransactionsOnTransactionsTable  = async () => {
+			let registerTransactions = await prisma.transactions.create({
+				data: {creditedAccountId: id, debitedAccountId: id, value: balance}
+			});	
+			res.send(registerTransactions);
+		};
+
+		if (updateBalanceById) {
+			registerTransactionsOnTransactionsTable();	
+		}
+		
+
+		
+	} catch (error) {
+		return res.status(400).json({
+			erro: true,
+			msg: 'erro: ' + error
+		});
 	}
 });
 
