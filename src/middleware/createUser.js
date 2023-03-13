@@ -11,10 +11,10 @@ const bodyParser = require('body-parser');
 app.use(cors());
 app.use(bodyParser.json());
 module.exports = async (req, res) => {
-	app.use(function(req, res) {
+	app.use(function(req, res, next) {
 		res.header('Access-Control-Allow-Origin', '*');
 		res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-		
+		return next();
 	});
 	try {
 		
@@ -53,8 +53,23 @@ module.exports = async (req, res) => {
 				createdAt: new Date()
 			},
 		});
+		try {
+			let accountUser = await prisma.account.create({
+				data: {
+					userId: user.id
+				}
+			});
 
-    
+			if (accountUser === null) {
+				res.status(400).json({
+					erro: true,
+					msg: 'Error, account user tem valor de nulo'
+				});
+			}
+		} catch (error) {
+			console.log(error);
+		}
+		
 		sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 		const msg = {
 			to: `${email}`,
@@ -83,5 +98,7 @@ module.exports = async (req, res) => {
 			Erro: true,
 			mensagem: 'Erro: ' + error,
 		});
+
 	}
+
 };
