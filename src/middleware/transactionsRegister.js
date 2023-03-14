@@ -3,7 +3,7 @@ const prisma = new PrismaClient();
 
 module.exports = async (req, res) => {
 	const {id} = req.params;
-	const {balance} = req.body;
+	const {balance, creditedAccountId} = req.body;
 	try {
 		let updateBalanceById = await prisma.account.update({
 			where: {accountId: id},
@@ -14,7 +14,7 @@ module.exports = async (req, res) => {
 
 		const registerTransactionsOnTransactionsTable  = async () => {
 			let registerTransactions = await prisma.transactions.create({
-				data: {creditedAccountId: id, debitedAccountId: id, value: balance}
+				data: {creditedAccountId: creditedAccountId, debitedAccountId: id, value: balance}
 			});	
 			res.send(registerTransactions);
 		};
@@ -29,5 +29,4 @@ module.exports = async (req, res) => {
 			msg: 'erro: ' + error
 		});
 	}
-
 };
