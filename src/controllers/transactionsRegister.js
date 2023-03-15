@@ -11,14 +11,15 @@ module.exports = async (req, res) => {
 			select: {balance: true}
 		});
 
-		if (getCurrentlyBalance > balance) {
+		if (getCurrentlyBalance.balance < balance) {
 			return res.status(400).json({
 				erro: true,
 				msg: 'Your money is not enough for this transaction'
 			});
 		}
 
-		let leftOverTrade = getCurrentlyBalance - balance;
+		let leftOverTrade = getCurrentlyBalance.balance - balance;
+		parseInt(leftOverTrade);
 
 		let updateBalanceById = await prisma.account.update({
 			where: {accountId:  debitedAccountId},
