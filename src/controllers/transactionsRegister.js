@@ -6,29 +6,38 @@ module.exports = async (req, res) => {
 	const {balance, creditedAccountId} = req.body;
 	try {
 
-		let getCurrentlyBalance = await prisma.account.findUnique({
+		let getDebitedCurrentlyBalance = await prisma.account.findUnique({
 			where: {accountId:debitedAccountId},
 			select: {balance: true}
 		});
 
-		if (getCurrentlyBalance.balance < balance) {
+		let getCreditedCurrentBalance = await prisma.account.findUnique({
+			where: {accountId: creditedAccountId },
+			select: {balance: true}
+		});
+
+		if (getDebitedCurrentlyBalance.balance < balance) {
 			return res.status(400).json({
 				erro: true,
 				msg: 'Your money is not enough for this transaction'
 			});
 		}
 
-		let leftOverTrade = getCurrentlyBalance.balance - balance;
-		parseInt(leftOverTrade);
+		let debitedLeftOverTrade = getDebitedCurrentlyBalance.balance - balance;
+		parseInt(debitedLeftOverTrade);
 
-		let updateBalanceById = await prisma.account.update({
+		let updateDebitedBalanceById = await prisma.account.update({
 			where: {accountId:  debitedAccountId},
-			data: { balance: leftOverTrade }
+			data: { balance: debitedLeftOverTrade }
 		});
 
+		let creditedLeftOverTrade = await getCreditedCurrentBalance.balance + balance;
+		parseInt(creditedLeftOverTrade);
 
-
-		console.log(updateBalanceById);
+		let updateCreditedBalanceById = await prisma.account.update({
+			where: {accountId: creditedAccountId},
+			data: {balance: creditedLeftOverTrade}
+		});
 
 		const registerTransactionsOnTransactionsTable  = async () => {
 			let registerTransactions = await prisma.transactions.create({
@@ -37,7 +46,7 @@ module.exports = async (req, res) => {
 			res.send(registerTransactions);
 		};
 
-		if (updateBalanceById) {
+		if (updateDebitedBalanceById && updateCreditedBalanceById) {
 			registerTransactionsOnTransactionsTable();	
 		}
 		
