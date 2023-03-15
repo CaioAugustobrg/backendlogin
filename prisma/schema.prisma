@@ -17,13 +17,14 @@ model User {
   password String
   createdAt DateTime @default(now())
   accountUserId Account[] @relation(name: "accountUserId")
+  @@map("user")
 }
 
 model Account {
   accountId String @id @default(uuid())
   id        User @relation("accountUserId",fields: [userId], references: [id])
   userId    String
-  balance   Int @default(100) @unique
+  balance   Float @default(100)
   creditedTransactions  Transactions[] @relation(name: "creditedAccount")
   debitedTransactions   Transactions[] @relation(name: "debitedAccount")
 }
