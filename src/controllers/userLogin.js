@@ -7,11 +7,17 @@ const prisma = new PrismaClient();
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const path = require('path');
+require('dotenv').config();
+const cookieParser = require('cookie-parser');
+app.use(cookieParser(process.env.COOKIE_SECRET));
+require('dotenv').config();
+
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
+
 
 module.exports = async (req, res) => {  
 	app.use(function(req, res, next) {
@@ -25,10 +31,9 @@ module.exports = async (req, res) => {
 		const hashPassword = await bcrypt.hash(password, 8);
 		let token = jwt.sign({ id: 1 }, 'AS3O20A193KS39DJANVN81937G', {
 			expiresIn: '7d',
-		});
+			
+		});	
 
-	
-	
 		let user = await prisma.user.findUnique({
 			where: {
 				formLogin: {
