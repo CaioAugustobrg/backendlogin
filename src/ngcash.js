@@ -10,11 +10,16 @@ app.use(express.urlencoded({extended: false}));
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(cors());
+
 const router = require('../src/routes/routes');
 
 app.use(router);
 
-
+const corsOptions = {
+	credentials: true,
+	origin: '*'
+};
+app.use(cors(corsOptions));
 
 app.listen(port, () =>
 	console.log(
