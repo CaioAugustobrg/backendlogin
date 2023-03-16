@@ -19,37 +19,35 @@ module.exports = async (req, res) => {
 		res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
 		return	next();
 	});
-
-	console.log(req.body);
-	const {  username, password, email, id} = req.body;
-	
-	const hashPassword = await bcrypt.hash(password, 8);
-	let token = jwt.sign({ id: 1 }, 'AS3O20A193KS39DJANVN81937G', {
-		expiresIn: '7d',
-	});
-
 	try {
-		let userId = await prisma.user.findFirst({
-			where: {id: id}
+		const {  username, password, email} = req.body;
+	
+		const hashPassword = await bcrypt.hash(password, 8);
+		let token = jwt.sign({ id: 1 }, 'AS3O20A193KS39DJANVN81937G', {
+			expiresIn: '7d',
 		});
-		console.log(userId);
-		if (userId === null) return res.json({msg: 'sssss'});
 
-		let user = await prisma.user.findFirst({
+	
+	
+		let user = await prisma.user.findUnique({
 			where: {
-				email: email,
-				username: username
+				formLogin: {
+					username: username,
+					email: email
+				}
 			},
+			
 		});
-
-		if (user.email === null || user.username === null) {
+		
+		if (!user) {
+			console.log(req.body);
 			return res.status(404).json({
 				erro: true,
 				mensagem: 'Erro: Email, usuário ou senha incorreto(s)!',
 			});
 		}
-
-		const passwordMatch = await bcrypt.compare(password, user.password);
+	
+		let passwordMatch = await bcrypt.compare(password, user.password);
 		if (!passwordMatch) {
 			return res.status(404).json({
 				erro: true,
