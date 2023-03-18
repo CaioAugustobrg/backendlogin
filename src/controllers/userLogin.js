@@ -17,7 +17,6 @@ app.use(express.urlencoded({extended: false}));
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-
 module.exports = async (req, res) => {  
 	app.use(function(req, res, next) {
 		res.header('Access-Control-Allow-Origin', '*');
@@ -55,7 +54,7 @@ module.exports = async (req, res) => {
 				mensagem: 'Erro: Email, usuário ou senha incorreto(s)!',
 			});
 		}
-		res.cookie('singned_token', `${token}`, {httpOnly: true},{secure: true}, {signed: true});
+		res.cookie('signed_token', token, {httpOnly: true}, {signed: true}, );
 		return res.status(200).json({
 			erro: false,
 			mensagem: 'Login efetuado com sucesso!',
