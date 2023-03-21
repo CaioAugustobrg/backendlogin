@@ -3,19 +3,19 @@ const prisma = new PrismaClient();
 const bcrypt = require('bcryptjs');
 require('dotenv').config();
 const sgMail = require('@sendgrid/mail');
-const express = require('express');
-const app = express();
-const cors = require('cors');
-const bodyParser = require('body-parser');
-app.use(cors());
-app.use(bodyParser.json());
+// const express = require('express');
+// // const app = express();
+// // // const cors = require('cors');
+// // // const bodyParser = require('body-parser');
+// // // app.use(cors());
+// // // app.use(bodyParser.json());
 
 module.exports = async (req, res) => {
-	app.use(function(req, res, next) {
-		res.header('Access-Control-Allow-Origin', '*');
-		res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-		return next();
-	});
+	// app.use(function(req, res, next) {
+	// 	res.header('Access-Control-Allow-Origin', '*');
+	// 	res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+	// 	return next();
+	// });
 	try {
 		
 		let { username, email } = req.body;
@@ -31,7 +31,7 @@ module.exports = async (req, res) => {
 			});
 		}
 
-		let emailExits = await prisma.user.findUnique({
+		let emailExits = await prisma.user.findFirst({
 			where: { email },
 		});
 
@@ -56,7 +56,7 @@ module.exports = async (req, res) => {
 				userId: user.id
 			}
 		});
-		if (accountUser === null) {
+		if (!accountUser) {
 			res.status(400).json({
 				erro: true,
 				msg: 'Error, account user tem valor de nulo'
