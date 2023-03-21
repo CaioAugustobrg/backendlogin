@@ -2,8 +2,7 @@ const jwt = require('jsonwebtoken');
 
 module.exports = {
 	eAdmin(req, res, next) {
-		const {signed_token} = req.data.cookies;
-
+		const { signed_token } = req.cookies;
 		if (!signed_token) {
 			return res.status(400).json({
 				erro: true,
