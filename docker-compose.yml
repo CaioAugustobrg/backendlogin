@@ -1,0 +1,16 @@
+version: '3'
+
+services:
+  db.postgres.ngcash:
+    image: postgres:alpine
+    ports:
+      - '5435:5432'
+    container_name: 'ng-cash-database'
+    restart: always
+    volumes:
+      - ./ng-cash-database:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: pguser
+      POSTGRES_PASSWORD:
+volumes:
+  ng-cash-database:
