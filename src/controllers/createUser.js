@@ -3,27 +3,25 @@ const prisma = new PrismaClient();
 const bcrypt = require('bcryptjs');
 require('dotenv').config();
 const sgMail = require('@sendgrid/mail');
-// const express = require('express');
-// // const app = express();
-// // // const cors = require('cors');
-// // // const bodyParser = require('body-parser');
-// // // app.use(cors());
-// // // app.use(bodyParser.json());
+const express = require('express');
+const app = express();
+const cors = require('cors');
+const bodyParser = require('body-parser');
+app.use(express.json());
+app.use(bodyParser.json());
+app.use(cors());
+app.use(express.urlencoded({extended: false}));
+
 
 module.exports = async (req, res) => {
-	// app.use(function(req, res, next) {
-	// 	res.header('Access-Control-Allow-Origin', '*');
-	// 	res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-	// 	return next();
-	// });
+
 	try {
-		
-		let { username, email } = req.body;
-		let hashPassword = await bcrypt.hash(req.body.password, 8);
-		let userExits = await prisma.user.findUnique({
+		const {username,  email, password } = req.body;
+		const hashPassword = await bcrypt.hash(password, 8);
+		const userExits = await prisma.user.findUnique({
 			where: { username },
 		});
-
+		
 		if (userExits) {
 			return res.status(400).json({
 				erro: true,
@@ -31,7 +29,7 @@ module.exports = async (req, res) => {
 			});
 		}
 
-		let emailExits = await prisma.user.findFirst({
+		const emailExits = await prisma.user.findFirst({
 			where: { email },
 		});
 
@@ -42,7 +40,7 @@ module.exports = async (req, res) => {
 			});
 		}
 
-		let user = await prisma.user.create({
+		const user = await prisma.user.create({
 			data: {
 				username: username,
 				email: email,
@@ -51,7 +49,7 @@ module.exports = async (req, res) => {
 			},
 		});
 		
-		let accountUser = await prisma.account.create({
+		const accountUser = await prisma.account.create({
 			data: {
 				userId: user.id
 			}
@@ -87,6 +85,8 @@ module.exports = async (req, res) => {
 		});
 	
 	} catch (error) {
+	
+		console.log(error);
 		return res.status(400).json({
 			Erro: true,
 			mensagem: 'Erro: ' + error,
