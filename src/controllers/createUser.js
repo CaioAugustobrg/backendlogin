@@ -13,7 +13,6 @@ app.use(cors());
 app.use(express.urlencoded({extended: false}));
 app.use(bodyParser.json());
 
-
 module.exports = async (req, res) => {
 	
 	try {
