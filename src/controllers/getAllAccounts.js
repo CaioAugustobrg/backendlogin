@@ -15,7 +15,16 @@ module.exports = async (req,res) => {
 				msg: 'getAccounts has a null value'
 			});
 		}
-		return res.json({getAccounts});
+
+		const getUsers = await prisma.user.findMany({});
+
+		if(!getUsers) {
+			return res.status(400).json({
+				erro: true,
+				msg: 'getUsers has a null value'
+			});
+		}
+		return res.json(getAccounts && getUsers);
 	} catch (error) {
 		console.log(error);
 		return res.status(400).json({
@@ -23,5 +32,8 @@ module.exports = async (req,res) => {
 			mensagem: `Erro: " + ${error}`,
 		});
 	}
+
+
+	
 };
 	
