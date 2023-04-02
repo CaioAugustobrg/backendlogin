@@ -4,40 +4,40 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
-// const bodyParser = require('body-parser');
-// const cors = require('cors');
+const bodyParser = require('body-parser');
+const cors = require('cors');
 // const path = require('path');
-// require('dotenv').config();
-// const cookieParser = require('cookie-parser');
-// app.use(cookieParser());
-// app.use(cors());
-// app.use(express.json());
-// app.use(express.urlencoded({extended: false}));
-// app.use(bodyParser.json());
+require('dotenv').config();
+const cookieParser = require('cookie-parser');
+app.use(cookieParser());
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({extended: false}));
+app.use(bodyParser.json());
 // app.use(express.static(path.join(__dirname, 'public')));
 
 module.exports = async (req, res) => {  
 	app.use(function(req, res, next) {
-		// res.header('Access-Control-Allow-Origin', '*');
-		
 		return	next();
 	});
+	const {  username, password, email} = req.body;
+
 	try {
-		const {  username, password, email} = req.body;
-		// const hashPassword = await bcrypt.hash(password, 8)
+		// const hashPassword = await bcrypt.hash(password, 8);
 		let token = jwt.sign({ id: 1 }, 'AS3O20A193KS39DJANVN81937G', {
 			expiresIn: '7d',
 		});	
 
 		let user = await prisma.user.findUnique({
-			where: {
+			where: {  
 				formLogin: {
 					username: username,
-					email: email
+					email: email,
+					
 				}
 			},
 		});
-		
+		let userId = user.id;
 		if (!user) {
 			console.log(req.body);
 			return res.status(404).json({
@@ -56,13 +56,18 @@ module.exports = async (req, res) => {
 		res.cookie('signed_token', token, {
 			maxAge: 1000,
 			domain: '',
+			sameSite: true//importante
+		});
+		res.cookie('user_id', userId, {
+			maxAge: 1000,
+			domain: '',
 			sameSite: true
 		});
-		
 		return res.status(200).json({
 			erro: false,
 			mensagem: 'Login efetuado com sucesso!',
 			token: token,
+			
 		});
 
 	} catch (error) {
