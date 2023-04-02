@@ -2,17 +2,17 @@ const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
 module.exports = async (req, res) => {
-	const {debitedAccountId} = req.params;
-	const {balance, creditedAccountId} = req.body;
+	const { debitedAccountId } = req.params;
+	const { balance, creditedAccountId } = req.body;
 	try {
 		let getDebitedCurrentlyBalance = await prisma.account.findUnique({
-			where: {accountId:debitedAccountId},
-			select: {balance: true}
+			where: { accountId: debitedAccountId },
+			select: { balance: true }
 		});
 
 		let getCreditedCurrentlyBalance = await prisma.account.findUnique({
-			where: {accountId: creditedAccountId },
-			select: {balance: true}
+			where: { accountId: creditedAccountId },
+			select: { balance: true }
 		});
 
 		if (getDebitedCurrentlyBalance.balance < balance) {
@@ -21,34 +21,34 @@ module.exports = async (req, res) => {
 				msg: 'Your dont have enough money for this transaction'
 			});
 		}
-		let debitedLeftOverTrade =  getDebitedCurrentlyBalance.balance - balance;
+		let debitedLeftOverTrade = getDebitedCurrentlyBalance.balance - balance;
 		parseInt(debitedLeftOverTrade);
 		let updateDebitedBalanceById = await prisma.account.update({
-			where: {accountId:  debitedAccountId},
+			where: { accountId: debitedAccountId },
 			data: { balance: debitedLeftOverTrade }
 		});
-		let creditedLeftOverTrade =  getCreditedCurrentlyBalance.balance + balance;
+		let creditedLeftOverTrade = getCreditedCurrentlyBalance.balance + balance;
 		parseInt(creditedLeftOverTrade);
 		let updateCreditedBalanceById = await prisma.account.update({
-			where: {accountId: creditedAccountId},
-			data: {balance: creditedLeftOverTrade}
+			where: { accountId: creditedAccountId },
+			data: { balance: creditedLeftOverTrade }
 		});
 
-		const registerTransactionsOnTransactionsTable  = async () => {
+		const registerTransactionsOnTransactionsTable = async () => {
 			let registerTransactions = await prisma.transactions.create({
-				data: {creditedAccountId: creditedAccountId, debitedAccountId: debitedAccountId, value: balance}
-			});	
+				data: { creditedAccountId: creditedAccountId, debitedAccountId: debitedAccountId, value: balance }
+			});
 			res.send(registerTransactions);
 		};
 
 		if (updateDebitedBalanceById && updateCreditedBalanceById) {
-			registerTransactionsOnTransactionsTable();	
+			registerTransactionsOnTransactionsTable();
 		}
 	} catch (error) {
 		return res.status(400).json({
 			erro: true,
 			msg: 'erro: ' + error,
-		
+
 		});
 	}
 };
