@@ -7,7 +7,6 @@ app.use(cors());
 
 module.exports = async (req,res) => {
 	let getAccounts;
-	let getUsers;
 	try {
 		getAccounts = await prisma.account.findMany({});
 		
@@ -18,15 +17,6 @@ module.exports = async (req,res) => {
 			});
 		}
 
-		getUsers = await prisma.user.findMany({});
-
-		if(!getUsers) {
-			return res.status(400).json({
-				erro: true,
-				msg: 'getUsers has a null value'
-			});
-		}
-		
 	} catch (error) {
 		console.log(error);
 		return res.status(400).json({
@@ -34,8 +24,8 @@ module.exports = async (req,res) => {
 			mensagem: `Erro: " + ${error}`,
 		});
 	}
+	console.log(getAccounts);
 
-
-	return res.json(getAccounts && getUsers);
+	return res.json(...getAccounts);
 };
 	
