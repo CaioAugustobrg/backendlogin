@@ -13,7 +13,7 @@ router.post('/register', createUser);
 
 router.post('/login', userLogin);
 
-router.get('/getAllAccounts',eAdmin, getAllAccounts);
+router.get('/getAllAccounts:id',eAdmin, getAllAccounts);
 
 router.get('/getAllUsers', eAdmin, getAllUsers);
 
