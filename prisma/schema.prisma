@@ -11,30 +11,30 @@ datasource db {
 }
 
 model User {
-  id String @id @default(uuid())
-  username String @unique
-  email    String @unique
-  password String
-  createdAt DateTime @default(now())
+  id            String    @id @default(uuid())
+  username      String    @unique
+  email         String    @unique
+  password      String
+  createdAt     DateTime  @default(now())
   accountUserId Account[] @relation(name: "accountUserId")
-  @@unique(fields: [email, username], name:"formLogin")
- 
+
+  @@unique(fields: [email, username], name: "formLogin")
 }
 
 model Account {
-  accountId String @id @default(uuid())
-  id        User @relation("accountUserId",fields: [userId], references: [id])
-  userId    String
-  balance   Int @default(100)
-  creditedTransactions  Transactions[] @relation(name: "creditedAccount")
-  debitedTransactions   Transactions[] @relation(name: "debitedAccount")
+  accountId            String         @id @default(uuid())
+  id                   User           @relation("accountUserId", fields: [userId], references: [id])
+  userId               String
+  balance              Int            @default(100)
+  creditedTransactions Transactions[] @relation(name: "creditedAccount")
+  debitedTransactions  Transactions[] @relation(name: "debitedAccount")
 }
 
 model Transactions {
   id                String   @id @default(uuid())
-  debitedAccount    Account? @relation(name:"creditedAccount" ,fields: [debitedAccountId], references: [accountId])
-  debitedAccountId  String?  
-  creditedAccount   Account? @relation(name:"debitedAccount" ,fields: [creditedAccountId], references: [accountId])
+  debitedAccount    Account? @relation(name: "creditedAccount", fields: [debitedAccountId], references: [accountId])
+  debitedAccountId  String?
+  creditedAccount   Account? @relation(name: "debitedAccount", fields: [creditedAccountId], references: [accountId])
   creditedAccountId String?
   value             Int
   createdAt         DateTime @default(now())
