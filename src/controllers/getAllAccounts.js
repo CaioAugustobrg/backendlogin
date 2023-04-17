@@ -1,12 +1,6 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
-const express = require('express');
-const app = express();
-const cors = require('cors');
-const bodyParser = require('body-parser');
-app.use(cors());
-app.use(express.json());
-app.use(bodyParser.json());
+
 
 module.exports = async (req,res) => {
 	let getAccounts;
@@ -14,7 +8,8 @@ module.exports = async (req,res) => {
 	try {
 		getAccounts = await prisma.account.findFirst({
 			where: {id: user_id},
-			select: {balance: true}
+			select: {balance: true,
+				accountId: true}
 		});
 		
 		if (!getAccounts) {
@@ -33,6 +28,6 @@ module.exports = async (req,res) => {
 	}
 	console.log(getAccounts);
 
-	return res.json(getAccounts);
+	return res.json({getAccounts});
 };
 	
