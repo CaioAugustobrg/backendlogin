@@ -13,7 +13,6 @@ app.use(cookieParser());
 app.use((req, res, next) => {
 	res.header('Access-Control-Allow-Origin', '*');
 	res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-	
 	res.header('Access-Control-Allow-Methods', 'GET,PUT,PATCH,POST,DELETE,OPTIONS');
 	next();
 });
@@ -28,7 +27,7 @@ app.use(router);
 
 app.listen(port, () =>
 	console.log(
-		`Express started on http://localhost:${port}; ` +
+		`Express started on http://127.0.0.1:${port}; ` +
       'press CRTL + C to terminate.'
 	)
 );
