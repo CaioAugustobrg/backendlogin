@@ -1,22 +1,12 @@
-const express = require('express');
-const app = express();
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
-const bodyParser = require('body-parser');
-require('dotenv').config();
 const bcrypt = require('bcryptjs');
-require('dotenv').config();
 const sgMail = require('@sendgrid/mail');
-const cors = require('cors');
-app.use(express.json());
-app.use(cors());
-app.use(express.urlencoded({extended: false}));
-app.use(bodyParser.json());
 
 module.exports = async (req, res) => {
-	
+	const {username,  email, password } =  req.body;
 	try {
-		const {username,  email, password } =  req.body;
+		
 		console.log(password, username, email);
 		const hashPassword = await bcrypt.hash(req.body.password, 8);
 		const userExits = await prisma.user.findUnique({
