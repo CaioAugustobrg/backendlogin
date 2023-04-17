@@ -1,9 +1,6 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
-const express = require('express');
-const app = express();
-const cors = require('cors');
-app.use(cors());
+
 
 module.exports = async (req,res) => {
 	let getUsers;
