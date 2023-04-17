@@ -1,25 +1,12 @@
-const express = require('express');
-const app = express();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
-const bodyParser = require('body-parser');
-const cors = require('cors');
-// const path = require('path');
-require('dotenv').config();
-const cookieParser = require('cookie-parser');
-app.use(cookieParser());
-app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({extended: false}));
-app.use(bodyParser.json());
+
+
 // app.use(express.static(path.join(__dirname, 'public')));
 
 module.exports = async (req, res) => {  
-	app.use(function(req, res, next) {
-		return	next();
-	});
 	const {  username, password, email} = req.body;
 
 	try {
