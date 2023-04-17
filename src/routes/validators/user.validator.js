@@ -7,7 +7,7 @@ const registrationSchema = Joi.object()
 		password: Joi.string().min(8).max(64)
 	});
 
-const userVerificationLogin = Joi.object()
+const loginSchema = Joi.object()
 	.keys({
 		username: Joi.string().min(3).max(64).required(),
 		email: Joi.string().email().required(),
@@ -16,4 +16,4 @@ const userVerificationLogin = Joi.object()
 
 module.exports = 
   registrationSchema, 
-userVerificationLogin;
+loginSchema;
