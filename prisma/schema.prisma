@@ -14,18 +14,25 @@ model User {
   username  String   @unique
   password  String
   createdAt DateTime @default(now())
+  account Accounts?
 }
 
 model Transactions {
   id               String   @id @default(uuid())
+  debitedAccount   Accounts @relation("debitedAccount", fields: [debitedAccountId], references: [id])
   debitedAccountId String   @unique
+  creditedAccount   Accounts @relation("creditedAccount", fields: [creditedAccountId], references: [id])
+  creditedAccountId String   @unique
   value            Int
   createdAt        DateTime @default(now())
-  debitedAccount   Accounts @relation("creditedAccount", fields: [debitedAccountId], references: [id])
 }
 
 model Accounts {
   id                   String        @id
+  user   User @relation(fields: [userId], references: [id])
+  userId String @unique
   balance              Int
-  creditedTransactions Transactions? @relation("creditedAccount")
+  creditedTransactions Transactions[] @relation("creditedAccount")
+  debitedTransactions Transactions[] @relation("debitedAccount")
+
 }
