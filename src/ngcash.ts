@@ -1,33 +1,23 @@
-const express = require('express');
-const app = express();
-const port = process.env.PORT || 3030;
-const path = require('path');
+import { NextFunction, Request, Response } from "express";
+import app from "./main/config/app";
+import env from "./main/config/env";
 require('dotenv').config();
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
-app.use(express.json());
-app.use(express.urlencoded({extended: false}));
+
 app.use(bodyParser.json());
 app.use(cookieParser());
-app.use((req, res, next) => {
+app.use((req: Request, res: Response, next: NextFunction) => {
 	res.header('Access-Control-Allow-Origin', '*');
 	res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
 	res.header('Access-Control-Allow-Methods', 'GET,PUT,PATCH,POST,DELETE,OPTIONS');
 	next();
 });
-app.use(express.static(path.join(__dirname, 'public')));
 app.use(cors({
 	credentials: true,
 	origin: true
 }));
-const router = require('../src/routes/routes');
 
-app.use(router);
+app.listen(env.port, () => console.log(`Server running at: http://localhost:${env.port}`))
 
-app.listen(port, () =>
-	console.log(
-		`Express started on http://127.0.0.1:${port}; ` +
-      'press CRTL + C to terminate.'
-	)
-);
