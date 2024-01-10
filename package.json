@@ -1,11 +1,12 @@
 {
   "name": "server",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "index.ts",
   "license": "MIT",
   "dependencies": {
     "@prisma/client": "^4.10.1",
     "@sendgrid/mail": "^7.7.0",
+    "apollo-server-express": "^3.13.0",
     "bcrypt": "^5.1.1",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.2",
@@ -21,10 +22,11 @@
     "mjml": "^4.14.1"
   },
   "scripts": {
-    "start": "nodemon src/ngcash.js"
+    "start": "nodemon src/ngcash.ts"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
+    "@types/express": "^4.17.21",
     "@types/mjml": "^4.7.4",
     "@types/node": "^20.9.1",
     "nodemon": "^3.0.1",
